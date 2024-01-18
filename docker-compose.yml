@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  # rabbitmq3:
+  #   container_name: "rabbitmq-host"
+  #   image: rabbitmq:3.8-management-alpine
+  #   env_file:
+  #     - .env
+  #   ports:
+  #       # AMQP protocol port
+  #       - '5673:5672'
+  #       # HTTP management UI
+  #       - '15673:15672'
+  app:
+    container_name: "drop-box-integration"
+    image: "docker-account-name/docker-project-nmae"
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: Dockerfile
+      labels:
+        - drop-box-integration
+    volumes:
+      - ./src:/src
+    ports:
+      - 8010:8000
+
+
+
+  
