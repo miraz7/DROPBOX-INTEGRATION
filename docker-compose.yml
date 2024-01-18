@@ -1,6 +1,17 @@
 version: "3.8"
 
 services:
+  postgresql:
+        image: postgres:latest
+        environment:
+            - POSTGRES_USER=miraz
+            - POSTGRES_PASSWORD=miraz
+            - POSTGRES_DB=demo_dropbox
+        ports: 
+            - "5432:5432"
+        restart: always
+        volumes: 
+          - postgres_data:/var/lib/postgresql/data
   # rabbitmq3:
   #   container_name: "rabbitmq-host"
   #   image: rabbitmq:3.8-management-alpine
@@ -28,4 +39,5 @@ services:
 
 
 
-  
+volumes:
+  postgres_data:
