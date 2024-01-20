@@ -24,12 +24,14 @@ def auth_start_with_dropbox():
 @router.get('/code', tags=["all"], status_code=status.HTTP_200_OK)
 def dropbox_code(request: Request):
     query_params =  request.query_params
+    
+    
     return views.dropbox_code(query_params)
 
 
 @router.get('/success', tags=["all"], status_code=status.HTTP_200_OK)
 def drop_box_success(request: Request):
     query_params =  request.query_params
-    return views.get_github_user(query_params)
+    return views.drop_box_success(query_params)
 
 drop_box_route = router
