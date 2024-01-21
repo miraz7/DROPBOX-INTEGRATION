@@ -8,6 +8,13 @@ DB_USER = os.getenv('DB_USER')
 DB_PASS = os.getenv('DB_PASS')
 DB_PORT = os.getenv('DB_PORT')
 
+DB_PASS = os.getenv('DB_PASS')
+DB_PORT = os.getenv('DB_PORT')
+
+
+DROPBOX_CLIENT_ID = os.getenv('DROPBOX_CLIENT_ID')
+DROPBOX_CLIENT_SECRET = os.getenv("DROPBOX_CLIENT_SECRET")
+
 
 
 RABBIT_URL = 'amqp://' + os.getenv('RABBITMQ_USER') + ':' + os.getenv('RABBITMQ_PASSWORD') + '@' + os.getenv(

@@ -5,43 +5,41 @@ import requests
 from fastapi.responses import RedirectResponse
 from starlette.responses import Response, StreamingResponse
 from models.user import DropBoxUser
-
-GITHUB_CLIENT_ID = ""
-GITHUB_CLIENT_SECRET = ""
+from .dropbox import DropBox
 
 
-def start_auth_with_dropbox(): 
+def start_auth_with_dropbox(request ): 
     
+    dropbox = DropBox()
     print("I came here")
+    
+    url = dropbox.get_auth_url(request)
+    
+    print(url)
+    
+    response = {}
+    # return Response(content=json.dumps(response), status_code=200)
     return RedirectResponse(
-        url="https://www.dropbox.com/oauth2/authorize?client_id=sf1n10mvdi9lu2n&response_type=code&redirect_uri=http://localhost:8010/api/v1/dropbox/code&token_access_type=offline", status_code=302
+        url=url, status_code=302
     )
 
 import requests
 import json
 from datetime import datetime, timedelta
-def dropbox_code(query_params): 
+def dropbox_code(request): 
     
-    url = "https://api.dropbox.com/oauth2/token"
+    query_params =  request.query_params
     authorization_code =  query_params.get('code')
-    redirect_uri = "http://localhost:8010/api/v1/dropbox/code"
-    client_id = "sf1n10mvdi9lu2n"
-    client_secret = "uaeqq1rrln7q6kx"
-    payload = {
-        'code': authorization_code,
-        'grant_type': 'authorization_code',
-        'redirect_uri': redirect_uri,
-        'client_id': client_id,
-        'client_secret': client_secret
-    }
-    response = requests.post(url, data=payload)
-    if response.status_code ==200 : 
+    new_dropbox = DropBox()
+    drop_box_token_response = new_dropbox.handle_authorization_code(authorization_code , request)
+    
+    if drop_box_token_response.status_code ==200 : 
         
-        print(response.status_code)
-        drop_box_data =json.loads(response.text)
+        print(drop_box_token_response.status_code)
+        drop_box_data =json.loads(drop_box_token_response.text)
         current_datetime = datetime.now()
         expires_datetime = current_datetime + timedelta(seconds=int(drop_box_data.get('expires_in')))
-
+        
         user_data = {
             "name": "John Doe",
             "age": "30",
@@ -55,7 +53,6 @@ def dropbox_code(query_params):
             "uid": drop_box_data.get('uid'),
             "account_id":drop_box_data.get('account_id'),
         }
-        
         dropbox_user = DropBoxUser(**user_data)
         new_user = dropbox_user.save_dropbox_user_data()
         
