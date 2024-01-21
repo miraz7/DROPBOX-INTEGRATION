@@ -17,16 +17,13 @@ router = APIRouter(
 
 
 @router.get('/auth', tags=["all"], status_code=status.HTTP_200_OK)
-def auth_start_with_dropbox():
-    return views.start_auth_with_dropbox()
+def auth_start_with_dropbox(request: Request):
+    return views.start_auth_with_dropbox(request)
  
 
 @router.get('/code', tags=["all"], status_code=status.HTTP_200_OK)
 def dropbox_code(request: Request):
-    query_params =  request.query_params
-    
-    
-    return views.dropbox_code(query_params)
+    return views.dropbox_code(request)
 
 
 @router.get('/success', tags=["all"], status_code=status.HTTP_200_OK)
