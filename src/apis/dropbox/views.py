@@ -6,6 +6,10 @@ from fastapi.responses import RedirectResponse
 from starlette.responses import Response, StreamingResponse
 from models.user import DropBoxUser
 from .dropbox import DropBox
+import requests
+import json
+from datetime import datetime, timedelta
+
 
 
 def start_auth_with_dropbox(request ): 
@@ -23,9 +27,6 @@ def start_auth_with_dropbox(request ):
         url=url, status_code=302
     )
 
-import requests
-import json
-from datetime import datetime, timedelta
 def dropbox_code(request): 
     
     query_params =  request.query_params
@@ -48,7 +49,8 @@ def dropbox_code(request):
             "code": "12345",
             "email": "test@miraz_test_0123.com",
             "access_token":drop_box_data.get('access_token'),
-            "expires_at": expires_datetime.strftime("%Y-%m-%d %H:%M:%S %z"),
+            "expires_at": expires_datetime,
+            "expires_in": int(drop_box_data.get('expires_in')),
             "refresh_token":drop_box_data.get('refresh_token'),
             "uid": drop_box_data.get('uid'),
             "account_id":drop_box_data.get('account_id'),
@@ -63,11 +65,46 @@ def dropbox_code(request):
         
 
 
-def drop_box_success(query_params):
+def get_app_all_users():
+    users = DropBoxUser.get_all_users()
+    resp = {"data" : users}
+    return Response(content=json.dumps(resp), status_code=200)
+
+
+def get_user_details(id ):
+    user = DropBoxUser.get_user(id=id)
+    if user :
+        resp = {
+            "success" : True,
+            "data" : user
+            }
+        return Response(content=json.dumps(resp), status_code=200)
+    else : 
+        resp = {"message" : "No user found"}
+        return Response(content=json.dumps(resp), status_code=400)
     
-    print(query_params)
     
     
-    pass
+    
+def get_dropbox_user_details(id):
+    user = DropBoxUser.get_user(id=id)
+    if user :
+        
+        # drop_box = DropBox(access_token=user.get('access_token'))
+        # data = drop_box.get_current_user_details()
+        
+        print(user)
+        
+        resp = {
+            "success" : True,
+            "data" : user
+            }
+        return Response(content=json.dumps(resp), status_code=200)
+    else : 
+        resp = {"message" : "No user found"}
+        return Response(content=json.dumps(resp), status_code=200)
+    
+    
+
     
  

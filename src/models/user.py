@@ -4,6 +4,7 @@ from sqlalchemy.sql import func
 from datetime import datetime
 from core.database import Base , get_db
 import uuid
+from fastapi.encoders import jsonable_encoder
 
 
 
@@ -18,12 +19,16 @@ class User(Base):
     code = Column(String , nullable = True)
     email = Column(String , nullable = True)
     access_token = Column(String , nullable = True)
-    expires_at = Column(String , nullable = True)
+    expires_at = Column(DateTime(timezone=True) , nullable = True)
+    expires_in = Column(Integer , nullable = True)
     refresh_token = Column(String , nullable = True)
     uid = Column(String , nullable = True)
     account_id = Column(String , nullable = True)
-    created_at = Column(DateTime, default=func.now())
-    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    created_at = Column(DateTime(timezone=True), default=func.now())
+    updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
+    
+    def as_dict(self):
+        return jsonable_encoder(self)
     
     
 class DropBoxUser:
@@ -67,6 +72,24 @@ class DropBoxUser:
             db.commit()
             
             return new_user
-        
     
+    def get_all_users():
+        with get_db() as db:
+            users = db.query(User).all()
+            dict = [user.as_dict() for user in users]
+            return dict
+    def get_user(id=None , email = None):
+        with get_db() as db:
+            filters = {}
+            if id :
+                filters.update({"id" : id})
+            if email : 
+                filters.update({"email" : email})
+                
+            query = db.query(User).filter_by(**filters)
+            user = query.first()
+            if user :
+                return user.as_dict()
+            else : 
+                return None 
     

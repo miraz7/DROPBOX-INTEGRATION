@@ -1,8 +1,8 @@
-"""some message
+"""Your migration message
 
-Revision ID: bde803eea085
+Revision ID: de816d26ba4a
 Revises: 
-Create Date: 2024-01-18 21:33:19.838411
+Create Date: 2024-01-25 20:45:02.143231
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = 'bde803eea085'
+revision: str = 'de816d26ba4a'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -27,8 +27,15 @@ def upgrade() -> None:
     sa.Column('country', sa.String(), nullable=True),
     sa.Column('city', sa.String(), nullable=True),
     sa.Column('code', sa.String(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.Column('email', sa.String(), nullable=True),
+    sa.Column('access_token', sa.String(), nullable=True),
+    sa.Column('expires_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('expires_in', sa.Integer(), nullable=True),
+    sa.Column('refresh_token', sa.String(), nullable=True),
+    sa.Column('uid', sa.String(), nullable=True),
+    sa.Column('account_id', sa.String(), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###

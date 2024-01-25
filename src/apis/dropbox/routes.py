@@ -26,9 +26,26 @@ def dropbox_code(request: Request):
     return views.dropbox_code(request)
 
 
-@router.get('/success', tags=["all"], status_code=status.HTTP_200_OK)
-def drop_box_success(request: Request):
-    query_params =  request.query_params
-    return views.drop_box_success(query_params)
+@router.get('/get-app-all-users', tags=["all"], status_code=status.HTTP_200_OK)
+def get_app_all_users(request: Request):
+    return views.get_app_all_users()
+
+
+@router.get('/get-single-user/{id}', tags=["all"], status_code=status.HTTP_200_OK)
+def get_app_all_users(id : str ,request: Request):
+    return views.get_user_details(id)
+
+
+@router.get('/get-dropbox-user-detils/{id}', tags=["all"], status_code=status.HTTP_200_OK)
+def get_app_all_users(id : str ,request: Request):
+    return views.get_dropbox_user_details(id)
+
+
+
+
+
+
+
+
 
 drop_box_route = router
