@@ -15,6 +15,9 @@ class DropBox():
         self.access_token = access_token or None
         
         
+
+        
+        
     def get_redirect_uri(self, request: Request):
         return str(request.base_url) + "/api/v1/dropbox/code"
     
@@ -56,6 +59,34 @@ class DropBox():
             return response.json()
         else:
             return response.text
+    def upload_dropbox_profile_photo(self , base_64_image):
+        
+        print(base_64_image)
+        
+        url = 'https://api.dropboxapi.com/2/account/set_profile_photo'
+        headers = {
+            'Authorization': f'Bearer {self.access_token}',  # Replace <your_access_token> with your actual access token
+            'Content-Type': 'application/json',
+        }
+
+        data = {
+            "photo": {
+                ".tag": "base64_data",
+                "base64_data": base_64_image
+            }
+        }
+
+        response = requests.post(url, headers=headers, json=data)
+
+        print(response.status_code)
+        # print(response.json())
+        # return response.json()
+        print(response.text)
+        
+        return {}
+        
+        
+        
     def handle_authorization_code(self, authorization_code , request = None):
         url = "https://api.dropbox.com/oauth2/token"
         payload = {
@@ -68,8 +99,10 @@ class DropBox():
         response = requests.post(url, data=payload)
 
         return response
-       
+
         
+ 
+ 
  
         
 class DropBoxToken():
@@ -92,8 +125,7 @@ class DropBoxToken():
             
     def get_valid_access_token(self):
         
-
-        if self.expires_at > datetime.now(timezone.utc) :
+        if self.expires_at < datetime.now(timezone.utc) :
                 # Token is expired or not set; refresh it
                 url = "https://api.dropboxapi.com/oauth2/token"
                 headers = {"Content-Type": "application/x-www-form-urlencoded"}
@@ -116,9 +148,7 @@ class DropBoxToken():
                     self.expires_at  = datetime.now() + timedelta(seconds=expires_in_seconds)
                     self.expires_in =  expires_in_seconds
                     
-                    
-                    # print(self.user.id)
-                    
+                    #Update the newly generated access token to user database
                     dropbox_user = DropBoxUser(id = self.user.id, access_token=self.access_token, expires_at=self.expires_at ,expires_in= self.expires_in )
                     user = dropbox_user.update_user()
                     
@@ -134,6 +164,6 @@ class DropBoxToken():
                     print(f"Dropbox Response Body : {response.text}" )
                     return None
         else:
-            print(f"Acess Token Is currently valid")
+            print(f"Acess Token Is Currently valid")
             return str(self.user.access_token)
      

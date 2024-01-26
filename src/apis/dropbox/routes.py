@@ -1,6 +1,6 @@
 from typing import Any, Dict
-from fastapi import APIRouter ,Request
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter ,Request,  File, UploadFile
+from fastapi import  Depends, status
 
 from . import views
 from . import schemas
@@ -41,6 +41,15 @@ def get_app_all_users(id : str ,request: Request):
     return views.get_dropbox_user_details(id)
 
 
+
+@router.post('/upload-dropbox-profile-picture/{id}', tags=["all"], status_code=status.HTTP_200_OK)
+async def update_dropbox_profile_pic(id : str ,request: Request , file: UploadFile = File(...)):
+    
+    file_content  = await file.read()
+    
+    # print(file_content)
+    
+    return views.update_dropbox_profile_pic(id , file_content )
 
 
 

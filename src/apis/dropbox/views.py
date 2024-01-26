@@ -9,7 +9,8 @@ from .dropbox import DropBox,DropBoxToken
 import requests
 import json
 from datetime import datetime, timedelta
-
+import base64
+from fastapi import  File
 
 
 def start_auth_with_dropbox(request ): 
@@ -94,22 +95,55 @@ def get_dropbox_user_details(id):
     user = DropBoxUser.get_user(id=id)
     if user :
         
-        # drop_box = DropBox(access_token=user.get('access_token'))
-        # data = drop_box.get_current_user_details()
-        
-        token = DropBoxToken(user=user)
-        access_token = token.get_valid_access_token()
-        
-        resp = {
-            "success" : True,
-            "data" : access_token
-            }
-        return Response(content=json.dumps(resp), status_code=200)
+        token_instance = DropBoxToken(user=user)
+        access_token = token_instance.get_valid_access_token()
+        if access_token : 
+            drop_box = DropBox(access_token=access_token)
+            user_data = drop_box.get_current_user_details()
+            
+            resp = {
+                "success" : True,
+                "data" : user_data
+                }
+            return Response(content=json.dumps(resp), status_code=200)
+        else : 
+            resp = {
+                "success" : False,
+                "data" : "No valid access token"
+                }
+            return Response(content=json.dumps(resp), status_code=400)
+            
     else : 
         resp = {"message" : "No user found"}
         return Response(content=json.dumps(resp), status_code=200)
     
+def update_dropbox_profile_pic(id ,  file):
     
-
+    user = DropBoxUser.get_user(id=id)
+    if user :
+        token_instance = DropBoxToken(user=user)
+        access_token = token_instance.get_valid_access_token()
+        if access_token :
     
- 
+            base64_image =  base64.b64encode(file, altchars=None).decode('utf-8')
+            drop_box = DropBox(access_token=access_token)
+            user_data = drop_box.upload_dropbox_profile_photo(base64_image)
+            
+            resp = {
+                "success" : True,
+                "data" : 'user_data'
+                }
+            return Response(content=json.dumps(resp), status_code=200)
+        else : 
+            resp = {
+                "success" : False,
+                "data" : "No valid access token"
+                }
+            return Response(content=json.dumps(resp), status_code=400)
+            
+    else : 
+        resp = {"message" : "No user found"}
+        return Response(content=json.dumps(resp), status_code=400)
+    
+  
+    
