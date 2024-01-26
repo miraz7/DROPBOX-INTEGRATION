@@ -5,7 +5,7 @@ import requests
 from fastapi.responses import RedirectResponse
 from starlette.responses import Response, StreamingResponse
 from models.user import DropBoxUser
-from .dropbox import DropBox
+from .dropbox import DropBox,DropBoxToken
 import requests
 import json
 from datetime import datetime, timedelta
@@ -58,7 +58,9 @@ def dropbox_code(request):
         dropbox_user = DropBoxUser(**user_data)
         new_user = dropbox_user.save_dropbox_user_data()
         
-        return Response(content=json.dumps(user_data), status_code=200)
+        print(new_user)
+        
+        return Response(content=json.dumps("user_data"), status_code=200)
         
     else :
          return Response(status_code=400)
@@ -74,9 +76,11 @@ def get_app_all_users():
 def get_user_details(id ):
     user = DropBoxUser.get_user(id=id)
     if user :
+        
+        print(user.id)
         resp = {
             "success" : True,
-            "data" : user
+            "data" : user.as_dict()
             }
         return Response(content=json.dumps(resp), status_code=200)
     else : 
@@ -90,14 +94,15 @@ def get_dropbox_user_details(id):
     user = DropBoxUser.get_user(id=id)
     if user :
         
-        # drop_box = DropBox(access_token=user.get('access_token'))
-        # data = drop_box.get_current_user_details()
+        drop_box = DropBox(access_token=user.get('access_token'))
+        data = drop_box.get_current_user_details()
         
-        print(user)
+        # token = DropBoxToken(user=user)
+        # access_token = token.get_valid_access_token()
         
         resp = {
             "success" : True,
-            "data" : user
+            "data" : access_token
             }
         return Response(content=json.dumps(resp), status_code=200)
     else : 
