@@ -94,11 +94,11 @@ def get_dropbox_user_details(id):
     user = DropBoxUser.get_user(id=id)
     if user :
         
-        drop_box = DropBox(access_token=user.get('access_token'))
-        data = drop_box.get_current_user_details()
+        # drop_box = DropBox(access_token=user.get('access_token'))
+        # data = drop_box.get_current_user_details()
         
-        # token = DropBoxToken(user=user)
-        # access_token = token.get_valid_access_token()
+        token = DropBoxToken(user=user)
+        access_token = token.get_valid_access_token()
         
         resp = {
             "success" : True,
