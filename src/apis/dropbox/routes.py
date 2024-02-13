@@ -52,6 +52,17 @@ async def update_dropbox_profile_pic(id : str ,request: Request , file: UploadFi
     return views.update_dropbox_profile_pic(id , file_content )
 
 
+@router.post('/upload-file-to-dropbox/{id}', tags=["all"], status_code=status.HTTP_200_OK)
+async def upload_file_to_dropbox(id : str ,request: Request , file: UploadFile = File(...)):
+    
+    file_content  = await file.read()
+    
+    # print(file_content)
+    
+    return views.upload_file_to_dropbox(id , file_content )
+
+
+
 
 
 

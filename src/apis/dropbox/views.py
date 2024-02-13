@@ -14,14 +14,10 @@ from fastapi import  File
 
 
 def start_auth_with_dropbox(request ): 
-    
     dropbox = DropBox()
     print("I came here")
-    
     url = dropbox.get_auth_url(request)
-    
     print(url)
-    
     response = {}
     # return Response(content=json.dumps(response), status_code=200)
     return RedirectResponse(
@@ -29,7 +25,6 @@ def start_auth_with_dropbox(request ):
     )
 
 def dropbox_code(request): 
-    
     query_params =  request.query_params
     authorization_code =  query_params.get('code')
     new_dropbox = DropBox()
@@ -41,7 +36,6 @@ def dropbox_code(request):
         drop_box_data =json.loads(drop_box_token_response.text)
         current_datetime = datetime.now()
         expires_datetime = current_datetime + timedelta(seconds=int(drop_box_data.get('expires_in')))
-        
         user_data = {
             "name": "John Doe",
             "age": "30",
@@ -58,15 +52,12 @@ def dropbox_code(request):
         }
         dropbox_user = DropBoxUser(**user_data)
         new_user = dropbox_user.save_dropbox_user_data()
-        
         print(new_user)
-        
         return Response(content=json.dumps("user_data"), status_code=200)
         
     else :
          return Response(status_code=400)
         
-
 
 def get_app_all_users():
     users = DropBoxUser.get_all_users()
@@ -91,10 +82,10 @@ def get_user_details(id ):
     
     
     
+    
 def get_dropbox_user_details(id):
     user = DropBoxUser.get_user(id=id)
     if user :
-        
         token_instance = DropBoxToken(user=user)
         access_token = token_instance.get_valid_access_token()
         if access_token : 
@@ -112,19 +103,16 @@ def get_dropbox_user_details(id):
                 "data" : "No valid access token"
                 }
             return Response(content=json.dumps(resp), status_code=400)
-            
     else : 
         resp = {"message" : "No user found"}
         return Response(content=json.dumps(resp), status_code=200)
     
 def update_dropbox_profile_pic(id ,  file):
-    
     user = DropBoxUser.get_user(id=id)
     if user :
         token_instance = DropBoxToken(user=user)
         access_token = token_instance.get_valid_access_token()
         if access_token :
-    
             base64_image =  base64.b64encode(file, altchars=None).decode('utf-8')
             drop_box = DropBox(access_token=access_token)
             user_data = drop_box.upload_dropbox_profile_photo(base64_image)
@@ -140,10 +128,11 @@ def update_dropbox_profile_pic(id ,  file):
                 "data" : "No valid access token"
                 }
             return Response(content=json.dumps(resp), status_code=400)
-            
     else : 
         resp = {"message" : "No user found"}
         return Response(content=json.dumps(resp), status_code=400)
     
   
+def upload_file_to_dropbox(id , file ): 
+    pass
     
